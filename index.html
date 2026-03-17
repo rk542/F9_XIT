@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFH4X F9_XITER - PROFESSIONAL MENU</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            /* Paleta Gamer Profissional */
+            --bg-panel: #11111d;      /* Fundo Principal */
+            --bg-sidebar: #0a0a14;   /* Fundo Lateral */
+            --bg-card: #1b1b2f;      /* Fundo dos Controles */
+            --primary-purple: #6f42c1; /* Cor de Destaque */
+            --text-main: #e0e0e6;    /* Texto Principal */
+            --text-muted: #8c8c9e;   /* Texto Secundário */
+            --active-green: #2edf87; /* Cor de Ativado */
+            --border-color: #2a2a3e;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: var(--font-family);
+            background: rgba(0,0,0,0.5); /* Simula overlay no jogo */
+            user-select: none;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- CONTAINER PRINCIPAL DO PAINEL --- */
+        #ffh4x-panel {
+            width: 480px;
+            height: 360px;
+            background: var(--bg-panel);
+            border-radius: 12px;
+            border: 1px solid var(--primary-purple);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            display: flex; /* Layout flexível lateral */
+            overflow: hidden;
+            position: fixed; /* Essencial para o modo flutuante */
+            z-index: 9999;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+
+        /* --- BARRA LATERAL (SIDEBAR) --- */
+        .sidebar {
+            width: 80px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+        }
+
+        .sidebar-brand {
+            font-size: 18px;
+            color: var(--primary-purple);
+            font-weight: bold;
+            margin-bottom: 40px;
+            text-shadow: 0 0 5px var(--primary-purple);
+        }
+
+        .tab-link {
+            width: 100%;
+            padding: 20px 0;
+            color: var(--text-muted);
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            border-left: 3px solid transparent;
+            font-size: 18px;
+        }
+
+        .tab-link:hover {
+            color: var(--text-main);
+            background: rgba(111, 66, 193, 0.1);
+        }
+
+        .tab-link.active {
+            color: var(--primary-purple);
+            background: rgba(111, 66, 193, 0.15);
+            border-left-color: var(--primary-purple);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            color: #444;
+            font-size: 10px;
+            padding-bottom: 10px;
+        }
+
+        /* --- CONTEÚDO PRINCIPAL (MAIN CONTENT) --- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Cabeçalho de Arrastar */
+        .panel-header {
+            height: 40px;
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            cursor: move;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .close-icon {
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: 0.2s;
+        }
+        .close-icon:hover { color: #ff4d4d; }
+
+        /* Área de Rolagem do Conteúdo */
+        .content-body {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-purple) var(--bg-sidebar);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Títulos de Seção */
+        .section-title {
+            color: var(--text-muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            margin-top: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #222;
+        }
+        .section-title:first-of-type { margin-top: 0; }
+
+        /* --- ESTILOS DOS CONTROLES (BOTÕES/SWITCHES) --- */
+
+        /* Grupo de Seleção de Alvo (Cabeça, Pescoço, Peito) */
+        .select-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .select-item {
+            flex: 1;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 0;
+            color: var(--text-muted);
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .select-item:hover { border-color: #444; color: var(--text-main); }
+
+        .select-item.active {
+            border-color: var(--primary-purple);
+            color: #fff;
+            background: rgba(111, 66, 193, 0.2);
+            box-shadow: inset 0 0 8px rgba(111, 66, 193, 0.4);
+        }
+
+        /* Linha de Função com Switch */
+        .func-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+        }
+        .func-card:hover { border-color: #444; }
+
+        .func-info { display: flex; flex-direction: column; }
+        .func-name { color: var(--text-main); font-size: 13px; font-weight: bold; }
+        .func-desc { color: var(--text-muted); font-size: 10px; }
+
+        /* O Switch Profissional (Toggle) */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 36px;
+            height: 20px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #333;
+            transition: .3s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #888;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: var(--active-green); }
+        input:checked + .slider:before {
+            transform: translateX(16px);
+            background-color: #fff;
+        }
+
+        /* Slider de FOV Profissional */
+        .slider-control {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-main);
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: #333;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--primary-purple);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        /* --- BOTÃO INJETAR (O MAIOR) --- */
+        #btn-inject {
+            width: calc(100% - 40px);
+            padding: 15px;
+            background: linear-gradient(135deg, #6f42c1 0%, #4a2a8a 100%);
+            border: none;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 20px 20px 20px; /* Alinhado com o padding do content-body */
+            transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(111, 66, 193, 0.3);
+        }
+
+        #btn-inject:hover {
+            box-shadow: 0 6px 15px rgba(111, 66, 193, 0.5);
+            transform: translateY(-1px);
+        }
+
+        #btn-inject:active { transform: translateY(1px); }
+
+        /* Status de Carregamento */
+        #injection-status {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        /* --- ÍCONE FLUTUANTE --- */
+        #floating-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-sidebar);
+            border: 2px solid var(--primary-purple);
+            border-radius: 50%;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: none; /* Inicialmente escondido */
+            justify-content: center;
+            align-items: center;
+            color: var(--primary-purple);
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 0 15px var(--primary-purple);
+            z-index: 10000;
+        }
+    </style>
+</head>
+<body>
+
+<div id="floating-icon" onclick="togglePanel()">
+    <i class="fas fa-ghost"></i>
+</div>
+
+<div id="ffh4x-panel">
+    
+    <div class="sidebar">
+        <div class="sidebar-brand">F9</div>
+        <div class="tab-link active" onclick="openTab(event, 'aimbot')"><i class="fas fa-crosshairs"></i></div>
+        <div class="tab-link" onclick="openTab(event, 'config')"><i class="fas fa-sliders-h"></i></div>
+        <div class="tab-link" onclick="openTab(event, 'info')"><i class="fas fa-info-circle"></i></div>
+        <div class="sidebar-footer">V1</div>
+    </div>
+
+    <div class="main-content">
+        <div class="panel-header" id="drag-header">
+            <span>FFH4X PRO</span>
+            <i class="fas fa-times close-icon" onclick="togglePanel()"></i>
+        </div>
+
+        <div class="content-body">
+            
+            <div id="aimbot" class="tab-content active">
+                <div class="section-title">Selecionar Alvo</div>
+                <div class="select-group">
+                    <div class="select-item active" onclick="selectPart(this)">Cabeça</div>
+                    <div class="select-item" onclick="selectPart(this)">Pescoço</div>
+                    <div class="select-item" onclick="selectPart(this)">Peito</div>
+                </div>
+
+                <div class="section-title">Funções Principais</div>
+                <div class="func-card">
+                    <div class="func-info">
+                        <span class="func-name">Aimbot (Automático)</span>
+                        <span class="func-desc">Mira trava no alvo próximo</span>
+                    </div>
+                    <label class="switch"><input type="checkbox" onchange="resetInject()"><span class="slider"></span></label>
+                </div>
+                <div class="func-card">
+                    <div class="func-info">
+                        <span class="func-name">Aim Treg (Travar Mira)</span>
+                        <span class="func-desc">Mira gruda ao atirar</span>
+                    </div>
+                    <label class="switch"><input type="checkbox" onchange="resetInject()"><span class="slider"></span></label>
+                </div>
+                <div class="func-card">
+                    <div class="func-info">
+                        <span class="func-name">Aim Legit (Suave)</span>
+                        <span class="func-desc">Ajuste de mira imperceptível</span>
+                    </div>
+                    <label class="switch"><input type="checkbox" onchange="resetInject()"><span class="slider"></span></label>
+                </div>
+                <div class="func-card">
+                    <div class="func-info">
+                        <span class="func-name">No Recoil 90%</span>
+                        <span class="func-desc">Reduz coice da arma</span>
+                    </div>
+                    <label class="switch"><input type="checkbox" onchange="resetInject()"><span class="slider"></span></label>
+                </div>
+            </div>
+
+            <div id="config" class="tab-content">
+                <div class="section-title">Configurações de Campo</div>
+                
+                <div class="func-card">
+                    <div class="func-info">
+                        <span class="func-name">Exibir Linha (FOV)</span>
+                        <span class="func-desc">Círculo de alcance da mira</span>
+                    </div>
+                    <label class="switch"><input type="checkbox" onchange="resetInject()"><span class="slider"></span></label>
+                </div>
+
+                <div class="slider-control">
+                    <div class="slider-header">
+                        <span>FOV Range</span>
+                        <span><span id="fov-val">180</span>°</span>
+                    </div>
+                    <input type="range" min="0" max="360" value="180" oninput="document.getElementById('fov-val').innerText = this.value; resetInject();">
+                </div>
+            </div>
+
+            <div id="info" class="tab-content">
+                <div class="section-title">Status do Injetor</div>
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; text-align: center; color: #fff;">
+                    <i class="fas fa-check-circle" style="color:var(--active-green); font-size:40px; margin-bottom:15px;"></i>
+                    <h3 style="margin:0; font-size:16px;">AUTENTICADO</h3>
+                    <p style="font-size:12px; color:var(--text-muted); margin:10px 0 0 0;">Painel Grátis | Versão V1 Pro</p>
+                    <p style="font-size:10px; color:#555; margin-top:5px;">@F9_STORE</p>
+                </div>
+            </div>
+
+        </div> <div id="injection-status">0%</div>
+        <button id="btn-inject" onclick="startInjection()">Aplicar Trap</button>
+
+    </div> </div>
+
+<script>
+    // --- LÓGICA DE ABAS (TABS) ---
+    function openTab(evt, tabName) {
+        let tabcontent = document.getElementsByClassName("tab-content");
+        for (let i = 0; i < tabcontent.length; i++) tabcontent[i].classList.remove("active");
+
+        let tablinks = document.getElementsByClassName("tab-link");
+        for (let i = 0; i < tablinks.length; i++) tablinks[i].classList.remove("active");
+
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+
+    // --- SELEÇÃO DE PARTE DO CORPO (EXCLUSIVA) ---
+    function selectPart(el) {
+        let parentGroup = el.parentElement;
+        parentGroup.querySelectorAll('.select-item').forEach(item => item.classList.remove('active'));
+        el.classList.add('active');
+        resetInject(); // Resetar injetor se mudar alvo
+    }
+
+    // --- LÓGICA DE INJEÇÃO (COM STATUS E RESET) ---
+    function startInjection() {
+        const btn = document.getElementById('btn-inject');
+        const status = document.getElementById('injection-status');
+        
+        btn.style.display = 'none';
+        status.style.display = 'block';
+        status.style.color = 'var(--text-muted)';
+
+        let count = 0;
+        let timer = setInterval(() => {
+            count++;
+            status.innerText = "Injetando códigos... " + count + "%";
+            if (count >= 100) {
+                clearInterval(timer);
+                status.innerText = "CÓDIGOS APLICADOS COM SUCESSO!";
+                status.style.color = 'var(--active-green)';
+            }
+        }, 35); // Velocidade da injeção
+    }
+
+    function resetInject() {
+        const btn = document.getElementById('btn-inject');
+        const status = document.getElementById('injection-status');
+        
+        // Só reseta se já tiver sido injetado
+        if (status.innerText.includes("SUCESSO")) {
+            btn.style.display = 'block';
+            btn.innerText = "Aplicar Alterações";
+            status.style.display = 'none';
+        }
+    }
+
+    // --- FUNÇÃO ESCONDER/MOSTRAR (TOGGLE) ---
+    function togglePanel() {
+        const panel = document.getElementById('ffh4x-panel');
+        const icon = document.getElementById('floating-icon');
+        
+        if (panel.style.display === "none") {
+            // Mostrar Painel
+            panel.style.display = "flex";
+            panel.style.opacity = "1";
+            panel.style.transform = "scale(1)";
+            icon.style.display = "none";
+        } else {
+            // Esconder Painel
+            panel.style.opacity = "0";
+            panel.style.transform = "scale(0.8)";
+            setTimeout(() => panel.style.display = "none", 300); // Espera animação
+            icon.style.display = "flex";
+        }
+    }
+
+    // --- ARRASTAR PAINEL (MÓVEL/PC) ---
+    const header = document.getElementById("drag-header");
+    const panel = document.getElementById("ffh4x-panel");
+    let isDragging = false, offsetX, offsetY;
+
+    // Função genérica para início do arrasto
+    function dragStart(e) {
+        // Suporte para mouse e toque
+        let clientX = e.clientX || (e.touches ? e.touches[0].clientX : null);
+        let clientY = e.clientY || (e.touches ? e.touches[0].clientY : null);
+
+        if (clientX === null) return; // Segurança
+
+        isDragging = true;
+        offsetX = clientX - panel.offsetLeft;
+        offsetY = clientY - panel.offsetTop;
+        panel.style.transition = 'none'; // Desativa animação enquanto arrasta
+    }
+
+    // Função genérica para mover
+    function dragMove(e) {
+        if (!isDragging) return;
+        e.preventDefault(); // Evita scroll da página
+
+        let clientX = e.clientX || (e.touches ? e.touches[0].clientX : null);
+        let clientY = e.clientY || (e.touches ? e.touches[0].clientY : null);
+
+        // Define a nova posição
+        panel.style.left = (clientX - offsetX) + "px";
+        panel.style.top = (clientY - offsetY) + "px";
+    }
+
+    // Função genérica para fim
+    function dragEnd() {
+        isDragging = false;
+        panel.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out'; // Reativa animação
+    }
+
+    // Eventos de Mouse
+    header.addEventListener("mousedown", dragStart);
+    document.addEventListener("mousemove", dragMove);
+    document.addEventListener("mouseup", dragEnd);
+
+    // Eventos de Toque (Mobile)
+    header.addEventListener("touchstart", dragStart);
+    document.addEventListener("touchmove", dragMove);
+    document.addEventListener("touchend", dragEnd);
+
+</script>
+
+</body>
+</html>
